@@ -1,0 +1,11 @@
+body {
+    background-color: #f4f6fb;
+}
+
+#sidebar {
+    min-height: calc(100vh - 56px); /* navbar yüksekliği kadar eksilt */
+}
+
+.dashboard-card {
+    border-radius: 16px;
+}

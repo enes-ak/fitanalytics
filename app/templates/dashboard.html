@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Dashboard</h1>
+        <p class="text-muted mb-0">Genel antrenman özetin</p>
+    </div>
+</div>
+
+<div class="row g-3">
+
+    <!-- Toplam Workout -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 dashboard-card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Toplam Workout</h6>
+                <h3 class="card-title">
+                    {{ total_workouts or 0 }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toplam Volume -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 dashboard-card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Toplam Volume (kg)</h6>
+                <h3 class="card-title">
+                    {{ total_volume or 0 }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Workout Tarihi -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 dashboard-card">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Son Workout Tarihi</h6>
+                <h3 class="card-title">
+                    {{ last_workout_date or "-" }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Alt tarafa ileride grafik koyarız -->
+<div class="mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Kas Grubu Dağılımı (yakında)</h5>
+            <p class="text-muted mb-0">Buraya bar/pie chart gelecek.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
