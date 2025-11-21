@@ -1,8 +1,8 @@
 -- === USER EKLE (login olabilmen için gerekli) ===
 INSERT INTO users (name, email, password_hash)
 VALUES (
-    'Enes',
-    'enes@example.com',
+    'sema',
+    'sema@example.com',
     '$pbkdf2-sha256$29000$6g/O4IkYVEdhZDTxjUH/sA$eRSLu4S6mdtjVYcLowRRtQxq5m8LSZD1Jq7P3o9jGdc'
 );
 

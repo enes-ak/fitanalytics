@@ -5,8 +5,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "db" / "fitanalytics.db"
 
-name = "Sema"
-email = "sema@example.com"
+name = "enes"
+email = "enes@example.com"
 raw_password = "1234"
 
 password_hash = generate_password_hash(raw_password)

@@ -67,6 +67,11 @@ LANGUAGES = {
         "login_password_label": "Şifre",
         "login_password_placeholder": "Şifre",
         "login_button": "Giriş Yap",
+        "login_error_invalid": "E-posta veya şifre hatalı.",
+        "login_info_title": "FitAnalytics nedir?",
+        "login_info_description": "Antrenmanlarını kolayca kaydet, analiz et ve gelişimini takip et.",
+        "login_info_features": "Planla, şablon oluştur ve ilerlemeni tek ekrandan izle.",
+        "login_version_label": "Sürüm",
     },
     "en": {
         "nav_dashboard": "Dashboard",
@@ -132,6 +137,11 @@ LANGUAGES = {
         "login_password_label": "Password",
         "login_password_placeholder": "Password",
         "login_button": "Sign In",
+        "login_error_invalid": "Incorrect email or password.",
+        "login_info_title": "What is FitAnalytics?",
+        "login_info_description": "Log your workouts, review insights, and track progress effortlessly.",
+        "login_info_features": "Plan sessions, build templates, and monitor growth from one dashboard.",
+        "login_version_label": "Version",
     },
 }
 
@@ -157,6 +167,7 @@ def create_app():
     
     app.config["LANGUAGES"] = LANGUAGES
     app.config["LANGUAGE_NAMES"] = LANGUAGE_NAMES
+    app.config["APP_VERSION"] = "1.0.0"
 
     app.register_blueprint(main)
     app.jinja_env.filters["datetime_format"] = datetime_format
@@ -170,6 +181,7 @@ def create_app():
             "t": translations,
             "current_language": language_code,
             "language_names": app.config["LANGUAGE_NAMES"],
+            "app_version": app.config.get("APP_VERSION", "1.0.0"),
         }
 
     return app

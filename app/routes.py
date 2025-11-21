@@ -8,8 +8,40 @@ main = Blueprint('main', __name__)
 
 @main.route("/login", methods=["GET", "POST"])
 def login():
-    # ... mevcut login kodun burada dursun ...
-    ...
+    if "user_id" in session:
+        return redirect(url_for("main.dashboard"))
+
+    error = None
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT user_id, name, password_hash
+            FROM users
+            WHERE email = ?;
+        """, (email,))
+        user = cur.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user["password_hash"], password):
+            session.clear()
+            session["user_id"] = user["user_id"]
+            session["user_name"] = user["name"]
+
+            next_url = request.args.get("next") or url_for("main.dashboard")
+            return redirect(next_url)
+
+        translations = current_app.config["LANGUAGES"].get(
+            session.get("language", "tr"),
+            current_app.config["LANGUAGES"]["tr"]
+        )
+        error = translations.get("login_error_invalid", "E-posta veya şifre hatalı.")
+
+    return render_template("login.html", error=error)
 
 
 @main.route("/set-language", methods=["POST"])
