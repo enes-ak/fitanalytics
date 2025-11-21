@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="mb-4">{{ t.exercises_title }}</h2>
+
+<div class="row">
+
+    <!-- Sol taraf: Tarih listesi -->
+    <div class="col-md-3">
+        <div class="list-group shadow-sm">
+
+            {% for workout_date in workout_dates %}
+            <a href="{{ url_for('main.exercises', date=workout_date) }}"
+               class="list-group-item list-group-item-action
+               {% if selected_workout_date == workout_date %} active {% endif %}">
+                {{ workout_date | format_date }}
+            </a>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <!-- Sağ taraf: Exercise tablosu -->
+    <div class="col-md-9">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <h5 class="mb-3">{{ t.exercises_selected_date }}: {{ selected_workout_date | format_date }}</h5>
+
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>{{ t.table_exercise }}</th>
+                            <th>{{ t.table_muscle }}</th>
+                            <th>{{ t.table_sets }}</th>
+                            <th>{{ t.table_reps }}</th>
+                            <th>{{ t.table_weight }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, muscle, sets, reps, weight in exercises %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ muscle }}</td>
+                            <td>{{ sets }}</td>
+                            <td>{{ reps }}</td>
+                            <td>{{ weight }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% if muscle_summary %}
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+        <h5 class="card-title mb-3">{{ t.exercises_summary_title }} ({{ selected_workout_date | format_date }})</h5>
+
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>{{ t.table_muscle_group }}</th>
+                    <th>{{ t.table_avg_volume }}</th>
+                    <th>{{ t.table_avg_weight }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for muscle, avg_vol, avg_weight in muscle_summary %}
+                <tr>
+                    <td>{{ muscle }}</td>
+                    <td>{{ avg_vol | round(2) }}</td>
+                    <td>{{ avg_weight | round(2) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

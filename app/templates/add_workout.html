@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="row">
+
+    <!-- ================= LEFT SIDEBAR — TEMPLATE LIST ================= -->
+    <div class="col-md-3">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ t.add_workout_templates_title }}</h5>
+                <p class="text-muted">{{ t.add_workout_templates_desc }}</p>
+
+                <div class="list-group">
+
+                    {% for template_id, template_name, workout_type in templates %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <strong>{{ template_name }}</strong><br>
+                            {% set type_translation_key = 'workout_type_' ~ workout_type %}
+                            <small class="text-muted">
+                                {{ t.get(type_translation_key, workout_type) }}
+                            </small>
+                        </div>
+
+                        <a href="{{ url_for('main.use_template', template_id=template_id) }}"
+                           class="btn btn-sm btn-primary">
+                            + {{ t.add_workout_add_today }}
+                        </a>
+
+                    </div>
+                    {% endfor %}
+
+                    {% if templates|length == 0 %}
+                        <p class="text-muted mt-3">{{ t.add_workout_no_templates }}</p>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= RIGHT — CREATE NEW TEMPLATE ================= -->
+    <div class="col-md-9">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <h4 class="mb-3">{{ t.add_workout_form_title }}</h4>
+
+                <form method="POST">
+
+                    <!-- Template name -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ t.add_workout_template_name }}</label>
+                        <input type="text"
+                               class="form-control"
+                               name="template_name"
+                               placeholder="{{ t.add_workout_template_placeholder }}"
+                               required>
+                    </div>
+
+                    <!-- Workout Type -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ t.add_workout_workout_type }}</label>
+                        <select class="form-select" name="workout_type" required>
+                            <option value="push">{{ t.workout_type_push }}</option>
+                            <option value="pull">{{ t.workout_type_pull }}</option>
+                            <option value="legs">{{ t.workout_type_legs }}</option>
+                            <option value="upper">{{ t.workout_type_upper }}</option>
+                            <option value="lower">{{ t.workout_type_lower }}</option>
+                            <option value="full">{{ t.workout_type_full }}</option>
+                            <option value="other">{{ t.workout_type_other }}</option>
+                        </select>
+                    </div>
+
+                    <hr>
+
+                    <!-- ================= EXERCISES SECTION ================= -->
+                    <h5 class="mb-3">{{ t.add_workout_exercises_title }}</h5>
+
+                    <div class="row g-3 text-muted fw-semibold small px-3">
+                        <div class="col-md-4">{{ t.table_exercise }}</div>
+                        <div class="col-md-3">{{ t.table_muscle }}</div>
+                        <div class="col-md-2">{{ t.table_sets }}</div>
+                        <div class="col-md-2">{{ t.table_reps }}</div>
+                        <div class="col-md-1">{{ t.table_weight }}</div>
+                    </div>
+
+                    <div id="exercise-container">
+
+                        <!-- DEFAULT BLOCK -->
+                        <div class="exercise-item border rounded p-3 mb-3">
+
+                            <div class="row g-3">
+
+                                <div class="col-md-4">
+                                    <input type="text" name="exercise_name"
+                                           class="form-control"
+                                           placeholder="{{ t.add_workout_placeholder_exercise }}"
+                                           aria-label="{{ t.table_exercise }}" required>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <input type="text" name="muscle"
+                                           class="form-control"
+                                           placeholder="{{ t.add_workout_placeholder_muscle }}"
+                                           aria-label="{{ t.table_muscle }}" required>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <input type="number" name="sets"
+                                           class="form-control" min="1" value="3"
+                                           aria-label="{{ t.table_sets }}" required>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <input type="number" name="reps"
+                                           class="form-control" min="1" value="10"
+                                           aria-label="{{ t.table_reps }}" required>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <input type="number" name="weight"
+                                           class="form-control" min="0" value="0"
+                                           placeholder="{{ t.add_workout_placeholder_weight }}"
+                                           aria-label="{{ t.table_weight }}">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Add Exercise Button -->
+                    <button type="button" class="btn btn-outline-primary mb-3" id="add-exercise-btn">
+                        {{ t.add_workout_add_exercise_btn }}
+                    </button>
+
+                    <hr>
+
+                    <!-- Submit -->
+                    <button class="btn btn-success px-4">{{ t.add_workout_submit_btn }}</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= JS FOR ADDING NEW EXERCISE ROW ================= -->
+<script>
+document.getElementById("add-exercise-btn").addEventListener("click", function () {
+    const container = document.getElementById("exercise-container");
+
+    const block = document.createElement("div");
+    block.classList.add("exercise-item", "border", "rounded", "p-3", "mb-3");
+
+    block.innerHTML = `
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <input type="text" name="exercise_name" class="form-control"
+                       placeholder="{{ t.add_workout_placeholder_exercise }}"
+                       aria-label="{{ t.table_exercise }}" required>
+            </div>
+
+            <div class="col-md-3">
+                <input type="text" name="muscle" class="form-control"
+                       placeholder="{{ t.add_workout_placeholder_muscle }}"
+                       aria-label="{{ t.table_muscle }}" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" name="sets" class="form-control" min="1" value="3"
+                       aria-label="{{ t.table_sets }}" required>
+            </div>
+
+            <div class="col-md-2">
+                <input type="number" name="reps" class="form-control" min="1" value="10"
+                       aria-label="{{ t.table_reps }}" required>
+            </div>
+
+            <div class="col-md-1">
+                <input type="number" name="weight" class="form-control" min="0" value="0"
+                       placeholder="{{ t.add_workout_placeholder_weight }}"
+                       aria-label="{{ t.table_weight }}">
+            </div>
+
+        </div>
+    `;
+
+    container.appendChild(block);
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 class="mb-3">{{ t.workout_detail_title }}</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        {% set detail_type_key = 'workout_type_' ~ workout.workout_type %}
+        {% set detail_type_label = t.get(detail_type_key, workout.workout_type) %}
+        <h5>{{ detail_type_label }} {{ t.workout_detail_day_suffix }}</h5>
+        <p class="text-muted">
+            {{ t.workout_detail_info_date }}: {{ workout.workout_date | format_date }}<br>
+            {{ t.workout_detail_info_note }}: {{ workout.notes or "-" }}
+        </p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <h5 class="mb-3">{{ t.workout_detail_exercises_title }}</h5>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ t.table_exercise }}</th>
+                    <th>{{ t.table_muscle }}</th>
+                    <th>{{ t.table_sets }}</th>
+                    <th>{{ t.table_reps }}</th>
+                    <th>{{ t.table_weight }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ex in exercises %}
+                <tr>
+                    <td>{{ ex[0] }}</td>
+                    <td>{{ ex[1] }}</td>
+                    <td>{{ ex[2] }}</td>
+                    <td>{{ ex[3] }}</td>
+                    <td>{{ ex[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}
