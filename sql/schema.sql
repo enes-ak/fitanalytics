@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS workouts (
     workout_type    TEXT NOT NULL CHECK (
                         workout_type IN ('push', 'pull', 'legs', 'upper', 'lower', 'full', 'other')
                     ),
-    duration_min    INTEGER,
     notes           TEXT,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

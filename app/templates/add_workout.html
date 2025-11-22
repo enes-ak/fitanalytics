@@ -1,199 +1,140 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="row">
+<h2 class="mb-4 fw-bold d-flex align-items-center gap-2">
+    <i data-lucide="pencil-ruler"></i>
+    Yeni Şablon Oluştur
+</h2>
 
-    <!-- ================= LEFT SIDEBAR — TEMPLATE LIST ================= -->
-    <div class="col-md-3">
-        <div class="card shadow-sm mb-4">
+<div class="row g-4">
+
+    <!-- ===================== SOL PANEL — HAZIR ŞABLONLAR ===================== -->
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
-                <h5 class="card-title">{{ t.add_workout_templates_title }}</h5>
-                <p class="text-muted">{{ t.add_workout_templates_desc }}</p>
 
-                <div class="list-group">
+                <h5 class="fw-semibold mb-3 d-flex align-items-center gap-2">
+                    <i data-lucide="sparkles"></i>
+                    Hazır Şablonlar
+                </h5>
 
-                    {% for template_id, template_name, workout_type in templates %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                {% for name, tpl in default_templates.items() %}
+                <div class="border rounded-3 p-3 mb-3 d-flex justify-content-between align-items-center bg-white">
 
-                        <div>
-                            <strong>{{ template_name }}</strong><br>
-                            {% set type_translation_key = 'workout_type_' ~ workout_type %}
-                            <small class="text-muted">
-                                {{ t.get(type_translation_key, workout_type) }}
-                            </small>
-                        </div>
-
-                        <a href="{{ url_for('main.use_template', template_id=template_id) }}"
-                           class="btn btn-sm btn-primary">
-                            + {{ t.add_workout_add_today }}
-                        </a>
-
+                    <div>
+                        <strong>{{ name }}</strong><br>
+                        <small class="text-muted">Tip: {{ tpl.workout_type }}</small>
                     </div>
-                    {% endfor %}
 
-                    {% if templates|length == 0 %}
-                        <p class="text-muted mt-3">{{ t.add_workout_no_templates }}</p>
-                    {% endif %}
+                    <form action="{{ url_for('main.use_default_template', template_name=name) }}" method="POST">
+                        <button class="btn btn-sm btn-primary d-flex align-items-center gap-1 rounded-3">
+                            <i data-lucide="plus"></i> Ekle
+                        </button>
+                    </form>
 
                 </div>
+                {% endfor %}
+
             </div>
         </div>
+
     </div>
 
-    <!-- ================= RIGHT — CREATE NEW TEMPLATE ================= -->
-    <div class="col-md-9">
-        <div class="card shadow-sm">
+    <!-- ===================== SAĞ PANEL — MANUEL ŞABLON OLUŞTURMA ===================== -->
+    <div class="col-md-8">
+
+        <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body">
 
-                <h4 class="mb-3">{{ t.add_workout_form_title }}</h4>
+                <h5 class="fw-semibold mb-3 d-flex align-items-center gap-2">
+                    <i data-lucide="clipboard-edit"></i>
+                    Yeni Şablon Oluştur
+                </h5>
 
-                <form method="POST">
+                <form method="POST" class="mt-3">
 
-                    <!-- Template name -->
+                    <!-- Template Name -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">{{ t.add_workout_template_name }}</label>
-                        <input type="text"
-                               class="form-control"
-                               name="template_name"
-                               placeholder="{{ t.add_workout_template_placeholder }}"
-                               required>
+                        <label class="form-label fw-semibold">Şablon Adı</label>
+                        <input type="text" name="template_name" class="form-control" required>
                     </div>
 
                     <!-- Workout Type -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">{{ t.add_workout_workout_type }}</label>
-                        <select class="form-select" name="workout_type" required>
-                            <option value="push">{{ t.workout_type_push }}</option>
-                            <option value="pull">{{ t.workout_type_pull }}</option>
-                            <option value="legs">{{ t.workout_type_legs }}</option>
-                            <option value="upper">{{ t.workout_type_upper }}</option>
-                            <option value="lower">{{ t.workout_type_lower }}</option>
-                            <option value="full">{{ t.workout_type_full }}</option>
-                            <option value="other">{{ t.workout_type_other }}</option>
+                        <label class="form-label fw-semibold">Antrenman Tipi</label>
+                        <select name="workout_type" class="form-select" required>
+                            <option value="push">Push</option>
+                            <option value="pull">Pull</option>
+                            <option value="legs">Legs</option>
+                            <option value="upper">Upper</option>
+                            <option value="lower">Lower</option>
+                            <option value="full">Full Body</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
 
                     <hr>
 
-                    <!-- ================= EXERCISES SECTION ================= -->
-                    <h5 class="mb-3">{{ t.add_workout_exercises_title }}</h5>
+                    <h6 class="fw-semibold mb-2 d-flex align-items-center gap-2">
+                        <i data-lucide="list-plus"></i>
+                        Hareketler
+                    </h6>
 
-                    <div class="row g-3 text-muted fw-semibold small px-3">
-                        <div class="col-md-4">{{ t.table_exercise }}</div>
-                        <div class="col-md-3">{{ t.table_muscle }}</div>
-                        <div class="col-md-2">{{ t.table_sets }}</div>
-                        <div class="col-md-2">{{ t.table_reps }}</div>
-                        <div class="col-md-1">{{ t.table_weight }}</div>
-                    </div>
+                    <div id="exercise-list"></div>
 
-                    <div id="exercise-container">
-
-                        <!-- DEFAULT BLOCK -->
-                        <div class="exercise-item border rounded p-3 mb-3">
-
-                            <div class="row g-3">
-
-                                <div class="col-md-4">
-                                    <input type="text" name="exercise_name"
-                                           class="form-control"
-                                           placeholder="{{ t.add_workout_placeholder_exercise }}"
-                                           aria-label="{{ t.table_exercise }}" required>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <input type="text" name="muscle"
-                                           class="form-control"
-                                           placeholder="{{ t.add_workout_placeholder_muscle }}"
-                                           aria-label="{{ t.table_muscle }}" required>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="number" name="sets"
-                                           class="form-control" min="1" value="3"
-                                           aria-label="{{ t.table_sets }}" required>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input type="number" name="reps"
-                                           class="form-control" min="1" value="10"
-                                           aria-label="{{ t.table_reps }}" required>
-                                </div>
-
-                                <div class="col-md-1">
-                                    <input type="number" name="weight"
-                                           class="form-control" min="0" value="0"
-                                           placeholder="{{ t.add_workout_placeholder_weight }}"
-                                           aria-label="{{ t.table_weight }}">
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Add Exercise Button -->
-                    <button type="button" class="btn btn-outline-primary mb-3" id="add-exercise-btn">
-                        {{ t.add_workout_add_exercise_btn }}
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-sm mt-2 d-flex align-items-center gap-1"
+                            onclick="addExercise()">
+                        <i data-lucide="plus-circle"></i>
+                        Hareket Ekle
                     </button>
 
                     <hr>
 
-                    <!-- Submit -->
-                    <button class="btn btn-success px-4">{{ t.add_workout_submit_btn }}</button>
+                    <button class="btn btn-primary mt-3 w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2">
+                        <i data-lucide="save"></i>
+                        Şablonu Kaydet
+                    </button>
 
                 </form>
 
             </div>
         </div>
-    </div>
 
+    </div>
 </div>
 
-<!-- ================= JS FOR ADDING NEW EXERCISE ROW ================= -->
+
 <script>
-document.getElementById("add-exercise-btn").addEventListener("click", function () {
-    const container = document.getElementById("exercise-container");
+function addExercise() {
+    const container = document.getElementById("exercise-list");
 
-    const block = document.createElement("div");
-    block.classList.add("exercise-item", "border", "rounded", "p-3", "mb-3");
+    const div = document.createElement("div");
+    div.className = "border rounded-3 p-3 mb-3 bg-white";
 
-    block.innerHTML = `
-        <div class="row g-3">
-
+    div.innerHTML = `
+        <div class="row g-2">
             <div class="col-md-4">
-                <input type="text" name="exercise_name" class="form-control"
-                       placeholder="{{ t.add_workout_placeholder_exercise }}"
-                       aria-label="{{ t.table_exercise }}" required>
+                <input name="exercise_name" class="form-control" placeholder="Hareket Adı" required>
             </div>
-
             <div class="col-md-3">
-                <input type="text" name="muscle" class="form-control"
-                       placeholder="{{ t.add_workout_placeholder_muscle }}"
-                       aria-label="{{ t.table_muscle }}" required>
+                <input name="muscle" class="form-control" placeholder="Kas Grubu" required>
             </div>
-
             <div class="col-md-2">
-                <input type="number" name="sets" class="form-control" min="1" value="3"
-                       aria-label="{{ t.table_sets }}" required>
+                <input name="sets" type="number" class="form-control" placeholder="Set" required>
             </div>
-
             <div class="col-md-2">
-                <input type="number" name="reps" class="form-control" min="1" value="10"
-                       aria-label="{{ t.table_reps }}" required>
+                <input name="reps" type="number" class="form-control" placeholder="Tekrar" required>
             </div>
-
             <div class="col-md-1">
-                <input type="number" name="weight" class="form-control" min="0" value="0"
-                       placeholder="{{ t.add_workout_placeholder_weight }}"
-                       aria-label="{{ t.table_weight }}">
+                <input name="weight" type="number" class="form-control" placeholder="kg">
             </div>
-
         </div>
     `;
 
-    container.appendChild(block);
-});
+    container.appendChild(div);
+}
 </script>
 
 {% endblock %}

@@ -9,9 +9,9 @@ VALUES (
 ---------------------------------------------------
 -- WORKOUT 1 — PUSH (Göğüs + Omuz + Triceps)
 ---------------------------------------------------
-INSERT INTO workouts (user_id, workout_date, workout_type, duration_min, notes)
+INSERT INTO workouts (user_id, workout_date, workout_type, notes)
 VALUES
-(1, '2025-01-10', 'push', 70, 'Göğüs + Omuz + Arka kol');
+(1, '2025-01-10', 'push', 'Göğüs + Omuz + Arka kol');
 
 INSERT INTO exercises (workout_id, exercise_name, target_muscle, sets, reps, weight_kg)
 VALUES
@@ -26,9 +26,9 @@ VALUES
 ---------------------------------------------------
 -- WORKOUT 2 — PULL (Sırt + Biceps + Rear Delts)
 ---------------------------------------------------
-INSERT INTO workouts (user_id, workout_date, workout_type, duration_min, notes)
+INSERT INTO workouts (user_id, workout_date, workout_type, notes)
 VALUES
-(1, '2025-01-12', 'pull', 75, 'Sırt + Biceps + Arka omuz');
+(1, '2025-01-12', 'pull', 'Sırt + Biceps + Arka omuz');
 
 INSERT INTO exercises (workout_id, exercise_name, target_muscle, sets, reps, weight_kg)
 VALUES
@@ -42,9 +42,9 @@ VALUES
 ---------------------------------------------------
 -- WORKOUT 3 — LEGS (Quadriceps + Hamstrings + Calves)
 ---------------------------------------------------
-INSERT INTO workouts (user_id, workout_date, workout_type, duration_min, notes)
+INSERT INTO workouts (user_id, workout_date, workout_type, notes)
 VALUES
-(1, '2025-01-14', 'legs', 80, 'Bacak + Arka bacak');
+(1, '2025-01-14', 'legs', 'Bacak + Arka bacak');
 
 INSERT INTO exercises (workout_id, exercise_name, target_muscle, sets, reps, weight_kg)
 VALUES

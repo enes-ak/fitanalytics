@@ -1,87 +1,124 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h2 class="mb-4">{{ t.exercises_title }}</h2>
+<div class="container-fluid">
 
-<div class="row">
-
-    <!-- Sol taraf: Tarih listesi -->
-    <div class="col-md-3">
-        <div class="list-group shadow-sm">
-
-            {% for workout_date in workout_dates %}
-            <a href="{{ url_for('main.exercises', date=workout_date) }}"
-               class="list-group-item list-group-item-action
-               {% if selected_workout_date == workout_date %} active {% endif %}">
-                {{ workout_date | format_date }}
-            </a>
-            {% endfor %}
-
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Workout Geçmişi</h2>
+            <p class="text-muted">Geçmiş antrenmanlarını görüntüle</p>
         </div>
+        <i data-lucide="history" class="text-primary" style="width:38px;height:38px;"></i>
     </div>
 
-    <!-- Sağ taraf: Exercise tablosu -->
-    <div class="col-md-9">
-        <div class="card shadow-sm">
-            <div class="card-body">
+    <div class="row">
 
-                <h5 class="mb-3">{{ t.exercises_selected_date }}: {{ selected_workout_date | format_date }}</h5>
+        <!-- LEFT: DATE LIST -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
 
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>{{ t.table_exercise }}</th>
-                            <th>{{ t.table_muscle }}</th>
-                            <th>{{ t.table_sets }}</th>
-                            <th>{{ t.table_reps }}</th>
-                            <th>{{ t.table_weight }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for name, muscle, sets, reps, weight in exercises %}
-                        <tr>
-                            <td>{{ name }}</td>
-                            <td>{{ muscle }}</td>
-                            <td>{{ sets }}</td>
-                            <td>{{ reps }}</td>
-                            <td>{{ weight }}</td>
-                        </tr>
+                    <h6 class="text-uppercase text-muted mb-3" style="letter-spacing:.5px;">
+                        Antrenman Tarihleri
+                    </h6>
+
+                    <div class="list-group">
+                        {% for workout_date in workout_dates %}
+                        <a href="{{ url_for('main.exercises', date=workout_date) }}"
+                           class="list-group-item list-group-item-action
+                           {% if selected_workout_date == workout_date %} active {% endif %}">
+                            <i data-lucide="calendar" class="me-2"></i>
+                            {{ workout_date | format_date }}
+                        </a>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </div>
 
+                </div>
             </div>
         </div>
+
+        <!-- RIGHT: EXERCISE TABLE -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
+                        <i data-lucide="clipboard-list" class="me-2 text-primary"></i>
+                        {{ selected_workout_date | format_date }} Antrenmanı
+                    </h5>
+
+                    {% if exercises %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Hareket</th>
+                                    <th>Kas</th>
+                                    <th>Set</th>
+                                    <th>Tekrar</th>
+                                    <th>Ağırlık (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for name, muscle, sets, reps, weight in exercises %}
+                                <tr>
+                                    <td>{{ name }}</td>
+                                    <td>{{ muscle }}</td>
+                                    <td>{{ sets }}</td>
+                                    <td>{{ reps }}</td>
+                                    <td>{{ weight }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Bu tarihe ait kayıtlı hareket bulunmuyor.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <!-- MUSCLE SUMMARY -->
+            {% if muscle_summary %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+
+                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
+                        <i data-lucide="activity" class="me-2 text-success"></i>
+                        Kas Grubu Özeti ({{ selected_workout_date | format_date }})
+                    </h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Kas Grubu</th>
+                                    <th>Ortalama Volume</th>
+                                    <th>Ortalama Ağırlık (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for muscle, avg_vol, avg_weight in muscle_summary %}
+                                <tr>
+                                    <td>{{ muscle }}</td>
+                                    <td>{{ avg_vol | round(2) }}</td>
+                                    <td>{{ avg_weight | round(2) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
     </div>
 
 </div>
-{% if muscle_summary %}
-<div class="card shadow-sm mt-4">
-    <div class="card-body">
-
-        <h5 class="card-title mb-3">{{ t.exercises_summary_title }} ({{ selected_workout_date | format_date }})</h5>
-
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>{{ t.table_muscle_group }}</th>
-                    <th>{{ t.table_avg_volume }}</th>
-                    <th>{{ t.table_avg_weight }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for muscle, avg_vol, avg_weight in muscle_summary %}
-                <tr>
-                    <td>{{ muscle }}</td>
-                    <td>{{ avg_vol | round(2) }}</td>
-                    <td>{{ avg_weight | round(2) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    </div>
-</div>
-{% endif %}
 
 {% endblock %}

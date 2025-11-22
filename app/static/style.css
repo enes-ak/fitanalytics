@@ -1,4 +1,4 @@
-/* Genel */
+/* ============ GLOBAL ============ */
 body {
     background-color: #f4f6fb !important;
     font-family: 'Inter', sans-serif;
@@ -14,38 +14,53 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Sidebar */
+/* ============ MODERN SIDEBAR ============ */
+
 #sidebar {
     min-height: calc(100vh - 56px);
     background-color: #ffffff;
 }
 
-.nav-link {
-    color: #4b5563 !important;
+.sidebar-modern {
+    background: #ffffff;
+    padding-top: 10px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
     font-size: 15px;
-    padding: 10px 14px !important;
+    font-weight: 500;
+    color: #4b5563;
     border-radius: 10px;
     margin: 4px 12px;
-    transition: all 0.2s;
+    transition: 0.2s;
 }
 
-.nav-link:hover {
-    background-color: #eef2ff !important;
-    color: #4338ca !important;
+.sidebar-item:hover {
+    background: #eef2ff;
+    color: #4338ca;
+    transform: translateX(4px);
 }
 
+.sidebar-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    stroke-width: 2.2;
+}
+
+/* Active link */
 .active-link {
-    background-color: #4f46e5 !important;
-    color: #ffffff !important;
-    font-weight: 600;
+    background: #e4ebff !important;
+    color: #0a2ebf !important;
+    font-weight: 600 !important;
+    border-left: 4px solid #0a2ebf;
 }
 
-.disabled-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
 
-/* Dashboard Cards */
+/* ============ DASHBOARD CARDS ============ */
 .dashboard-card {
     border-radius: 18px !important;
     transition: 0.18s ease;
@@ -60,7 +75,7 @@ body {
     font-size: 14px;
 }
 
-/* Gradient Card Themes */
+/* Gradient Cards */
 .card-gradient-purple {
     background: linear-gradient(135deg, #6366F1, #4F46E5);
     color: white;

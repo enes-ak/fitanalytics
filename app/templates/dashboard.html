@@ -1,97 +1,116 @@
 {% extends "layout.html" %}
-
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">{{ t.dashboard_title }}</h1>
-        <p class="text-muted mb-0">{{ t.dashboard_subtitle }}</p>
-    </div>
-</div>
+<div class="container-fluid">
 
-<div class="row g-3">
-
-    <!-- Toplam Workout -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 dashboard-card card-gradient-purple">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2">{{ t.dashboard_total_workouts }}</h6>
-                <h3 class="card-title">{{ total_workouts or 0 }}</h3>
-                <div class="mt-3" style="font-size: 28px;">🏋️</div>
-            </div>
+    <!-- ============ HEADER ============ -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Dashboard</h2>
+            <p class="text-muted mb-0">Genel antrenman özetin</p>
         </div>
     </div>
 
-    <!-- Toplam Volume -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 dashboard-card card-gradient-green">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2">{{ t.dashboard_total_volume }}</h6>
-                <h3 class="card-title">{{ total_volume or 0 }}</h3>
-                <div class="mt-3" style="font-size: 28px;">📈</div>
+    <!-- ============ TOP CARDS ============ -->
+    <div class="row g-3">
+
+        <!-- Total Workouts -->
+        <div class="col-md-4">
+            <div class="card shadow-sm dashboard-card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-muted mb-1" style="letter-spacing: .5px;">
+                            Toplam Workout
+                        </h6>
+                        <h3 class="fw-bold">{{ total_workouts }}</h3>
+                    </div>
+                    <i data-lucide="dumbbell" class="text-primary" style="width:38px;height:38px;"></i>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Son Workout -->
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 dashboard-card card-gradient-blue">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2">{{ t.dashboard_last_workout }}</h6>
-
-                <h3 class="card-title">
-                    {{ workout_date | format_date if workout_date else "-" }}
-                </h3>
-
-                <div class="mt-3" style="font-size: 28px;">📅</div>
+        <!-- Total Volume -->
+        <div class="col-md-4">
+            <div class="card shadow-sm dashboard-card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-muted mb-1">Toplam Volume (kg)</h6>
+                        <h3 class="fw-bold">{{ total_volume }}</h3>
+                    </div>
+                    <i data-lucide="bar-chart-2" class="text-success" style="width:38px;height:38px;"></i>
+                </div>
             </div>
         </div>
+
+        <!-- Last Workout -->
+        <div class="col-md-4">
+            <div class="card shadow-sm dashboard-card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-muted mb-1">Son Workout</h6>
+                        <h3 class="fw-bold">
+                            {% if workout_date %}
+                                {{ workout_date | datetime_format }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <i data-lucide="calendar" class="text-info" style="width:38px;height:38px;"></i>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
-
-<div class="mt-4">
-    <div class="card shadow-sm border-0">
+    <!-- ============ MUSCLE TABLE ============ -->
+    <div class="card shadow-sm mt-4">
         <div class="card-body">
 
-            <h5 class="card-title mb-3">{{ t.dashboard_muscle_table_title }}</h5>
+            <h5 class="fw-semibold mb-3">
+                Kas Grubu Başına Ortalama Volume & Ağırlık
+            </h5>
 
             {% if muscle_volumes %}
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>{{ t.table_muscle_group }}</th>
-                        <th>{{ t.table_avg_volume }}</th>
-                        <th>{{ t.table_avg_weight }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for muscle, avg_volume, avg_weight in muscle_volumes %}
-                    <tr>
-                        <td>{{ muscle }}</td>
-                        <td>{{ avg_volume | round(2) }}</td>
-                        <td>{{ avg_weight | round(2) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Kas Grubu</th>
+                            <th>Ortalama Volume (kg)</th>
+                            <th>Ortalama Ağırlık (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for muscle, avg_volume, avg_weight in muscle_volumes %}
+                        <tr>
+                            <td>{{ muscle }}</td>
+                            <td>{{ avg_volume | round(2) }}</td>
+                            <td>{{ avg_weight | round(2) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-            <p class="text-muted mb-0">{{ t.dashboard_no_data }}</p>
+            <p class="text-muted mb-0">Henüz antrenman verisi bulunmuyor.</p>
             {% endif %}
+
         </div>
     </div>
-</div>
 
-<div class="mt-4">
-    <div class="card shadow-sm border-0">
+    <!-- ============ CHART ============ -->
+    <div class="card shadow-sm mt-4">
         <div class="card-body">
-            <h5 class="card-title mb-3">{{ t.dashboard_chart_title }}</h5>
+            <h5 class="fw-semibold mb-3">Kas Grubu Ortalama Volume Grafik</h5>
             <canvas id="muscleBarChart" height="120"></canvas>
         </div>
     </div>
+
 </div>
 
+
+<!-- ============ CHART JS ============ -->
 <script>
     const muscleLabels = {{ muscles | tojson }};
     const avgVolumes = {{ avg_volumes | tojson }};
@@ -102,20 +121,17 @@
         data: {
             labels: muscleLabels,
             datasets: [{
-                label: '{{ t.table_avg_volume }}',
+                label: 'Ortalama Volume (kg)',
                 data: avgVolumes,
-                backgroundColor: 'rgba(99,102,241,0.7)',
+                backgroundColor: 'rgba(79,70,229,0.7)',
                 borderColor: 'rgba(79,70,229,1)',
                 borderWidth: 1,
                 borderRadius: 6,
-                hoverBackgroundColor: 'rgba(79,70,229,0.9)'
             }]
         },
         options: {
             responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
+            scales: { y: { beginAtZero: true } }
         }
     });
 </script>

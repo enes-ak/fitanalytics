@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1 d-flex align-items-center">
+                <i data-lucide="clipboard-list" class="me-2 text-primary"></i>
+                {{ template.template_name }}
+            </h2>
+            <p class="text-muted mb-0">
+                Şablon Türü: <strong>{{ template.workout_type | capitalize }}</strong>
+            </p>
+        </div>
+
+        <a href="{{ url_for('main.my_templates') }}"
+           class="btn btn-outline-secondary d-flex align-items-center">
+            <i data-lucide="arrow-left" class="me-2"></i>
+            Geri Dön
+        </a>
+    </div>
+
+    <!-- TEMPLATE INFO CARD -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="fw-semibold d-flex align-items-center">
+                        <i data-lucide="info" class="me-2 text-primary"></i>
+                        Şablon Bilgileri
+                    </h5>
+                    <p class="text-muted">
+                        Bu şablonun tüm hareketlerini ve detaylarını görüntüleyebilirsin.
+                    </p>
+                </div>
+
+                <!-- Apply Template -->
+                <a href="{{ url_for('main.use_template', template_id=template.template_id) }}"
+                   class="btn btn-primary text-white d-flex align-items-center">
+                    <i data-lucide="play" class="me-2"></i>
+                    Bu Şablonu Kullan
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- EXERCISE TABLE -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <h5 class="fw-semibold mb-3 d-flex align-items-center">
+                <i data-lucide="dumbbell" class="me-2 text-primary"></i>
+                Hareket Detayları
+            </h5>
+
+            {% if exercises %}
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Hareket</th>
+                        <th>Kas Grubu</th>
+                        <th>Set</th>
+                        <th>Tekrar</th>
+                        <th>Ağırlık (kg)</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for ex in exercises %}
+                    <tr>
+                        <td>{{ ex.exercise_name }}</td>
+                        <td>{{ ex.target_muscle }}</td>
+                        <td>{{ ex.default_sets }}</td>
+                        <td>{{ ex.default_reps }}</td>
+                        <td>{{ ex.default_weight }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% else %}
+            <p class="text-muted mb-0">Bu şablonda henüz hareket yok.</p>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
