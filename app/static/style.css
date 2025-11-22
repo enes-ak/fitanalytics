@@ -17,50 +17,92 @@ body {
 /* ============ MODERN SIDEBAR ============ */
 
 #sidebar {
+    width: 240px;
     min-height: calc(100vh - 56px);
-    background-color: #ffffff;
-}
-
-.sidebar-modern {
     background: #ffffff;
-    padding-top: 10px;
+    border-right: 1px solid #e5e7eb;
+    transition: width 0.25s ease;
+    overflow: hidden;
+    padding-top: 12px;
 }
 
+/* Collapsed state */
+#sidebar.sidebar-collapsed {
+    width: 72px !important;
+}
+
+/* Sidebar items */
 .sidebar-item {
     display: flex;
     align-items: center;
+    gap: 12px;
     padding: 12px 18px;
     font-size: 15px;
     font-weight: 500;
-    color: #4b5563;
-    border-radius: 10px;
-    margin: 4px 12px;
-    transition: 0.2s;
+    color: #374151 !important;
+    border-radius: 8px;
+    margin: 6px 10px;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.2s, color 0.2s;
 }
 
 .sidebar-item:hover {
     background: #eef2ff;
-    color: #4338ca;
+    color: #4338ca !important;
     transform: translateX(4px);
 }
 
+/* Sidebar icons */
 .sidebar-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+    width: 22px;
+    height: 22px;
     stroke-width: 2.2;
+    flex-shrink: 0;
 }
 
-/* Active link */
+/* Text label */
+.sidebar-item span {
+    transition: opacity 0.25s, transform 0.25s ease;
+}
+
+/* Collapsed → hide text */
+#sidebar.sidebar-collapsed .sidebar-item span {
+    opacity: 0;
+    transform: translateX(-15px);
+    pointer-events: none;
+}
+
+/* Collapsed → center items */
+#sidebar.sidebar-collapsed .sidebar-item {
+    justify-content: center;
+}
+
+/* Active link — taşma yapmayacak şekilde düzeltildi */
 .active-link {
     background: #e4ebff !important;
     color: #0a2ebf !important;
     font-weight: 600 !important;
-    border-left: 4px solid #0a2ebf;
+    border-left: 3px solid #0a2ebf;   /* daha ince yapıldı */
+    padding-left: 15px;               /* border compensation */
 }
 
+#sidebar.sidebar-collapsed .active-link {
+    padding-left: 0 !important;
+    border-left: none !important;
+}
+
+/* MAIN CONTENT genişlemesi */
+#mainContent {
+    transition: margin-left 0.25s ease;
+    margin-left: 240px;
+}
+
+#mainContent.main-expanded {
+    margin-left: 72px !important;
+}
 
 /* ============ DASHBOARD CARDS ============ */
+
 .dashboard-card {
     border-radius: 18px !important;
     transition: 0.18s ease;
@@ -68,7 +110,7 @@ body {
 
 .dashboard-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0px 8px 24px rgba(0,0,0,0.08);
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .card-subtitle {

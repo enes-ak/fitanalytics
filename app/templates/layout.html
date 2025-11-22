@@ -24,18 +24,18 @@
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-dark bg-dark px-3">
-        <div class="container-fluid">
+        <div class="container-fluid d-flex align-items-center">
 
-            <a class="navbar-brand fw-bold" href="{{ url_for('main.dashboard') }}">
-                🧬 FitAnalytics
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+            href="{{ url_for('main.dashboard') }}">
+                <i data-lucide="activity" class="sidebar-icon"></i>
+                <span>FitAnalytics</span>
             </a>
 
-            <!-- Mobile menu toggle -->
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#sidebar">
-                <span class="navbar-toggler-icon"></span>
+            <!-- Sidebar Toggle -->
+            <button id="sidebarToggle" class="btn btn-outline-light btn-sm ms-3">
+                <i data-lucide="menu"></i>
             </button>
 
             <!-- LANGUAGE SELECT -->
@@ -48,21 +48,18 @@
                         name="language"
                         onchange="this.form.submit()">
                     {% for code, label in language_names.items() %}
-                    <option value="{{ code }}"
-                            {% if current_language == code %}selected{% endif %}>
+                    <option value="{{ code }}" {% if current_language == code %}selected{% endif %}>
                         {{ label }}
                     </option>
                     {% endfor %}
                 </select>
             </form>
 
+            <!-- USER MENU -->
             {% if session.get("user_name") %}
             <div class="dropdown text-white">
                 <a class="text-white text-decoration-none dropdown-toggle"
-                   href="#"
-                   id="userMenu"
-                   role="button"
-                   data-bs-toggle="dropdown">
+                   href="#" role="button" data-bs-toggle="dropdown">
                     👤 {{ session["user_name"] }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
@@ -71,16 +68,15 @@
                 </ul>
             </div>
             {% endif %}
-
         </div>
     </nav>
 
+    <!-- APP LAYOUT -->
     <div class="container-fluid">
-        <div class="row">
+        <div class="row app-layout">
 
             <!-- SIDEBAR -->
-            <nav id="sidebar"
-                 class="col-md-3 col-lg-2 d-md-block bg-white collapse show border-end shadow-sm sidebar-modern">
+            <nav id="sidebar" class="sidebar-modern col-md-3 col-lg-2 bg-white border-end shadow-sm">
 
                 <div class="d-flex flex-column pt-3">
 
@@ -88,14 +84,14 @@
                     <a class="nav-link sidebar-item {% if request.path == '/' %} active-link {% endif %}"
                        href="{{ url_for('main.dashboard') }}">
                         <i data-lucide="bar-chart-2" class="sidebar-icon"></i>
-                        <span>{{ t.nav_dashboard }}</span>
+                        <span class="link-text">{{ t.nav_dashboard }}</span>
                     </a>
 
                     <!-- Create New Template -->
                     <a class="nav-link sidebar-item {% if request.path.startswith('/add-workout') %} active-link {% endif %}"
                        href="{{ url_for('main.add_workout') }}">
-                        <i data-lucide="plus-square" class="sidebar-icon"></i>
-                        <span>
+                        <i data-lucide="plus-circle" class="sidebar-icon"></i>
+                        <span class="link-text">
                             {% if current_language == 'tr' %}Yeni Şablon{% else %}New Template{% endif %}
                         </span>
                     </a>
@@ -104,7 +100,7 @@
                     <a class="nav-link sidebar-item {% if request.path.startswith('/my-templates') %} active-link {% endif %}"
                        href="{{ url_for('main.my_templates') }}">
                         <i data-lucide="folder" class="sidebar-icon"></i>
-                        <span>
+                        <span class="link-text">
                             {% if current_language == 'tr' %}Benim Şablonlarım{% else %}My Templates{% endif %}
                         </span>
                     </a>
@@ -113,7 +109,7 @@
                     <a class="nav-link sidebar-item {% if request.path.startswith('/exercises') %} active-link {% endif %}"
                        href="{{ url_for('main.exercises') }}">
                         <i data-lucide="calendar" class="sidebar-icon"></i>
-                        <span>{{ t.nav_history }}</span>
+                        <span class="link-text">{{ t.nav_history }}</span>
                     </a>
 
                 </div>
@@ -121,19 +117,8 @@
 
             <!-- MAIN CONTENT -->
             <main id="mainContent" class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <button class="btn btn-outline-secondary btn-sm mb-3 d-none d-md-inline-flex align-items-center"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#sidebar"
-                        aria-controls="sidebar"
-                        aria-expanded="true">
-                    ☰
-                </button>
-
-                {% block content %}
-                {% endblock %}
+                {% block content %}{% endblock %}
             </main>
-
         </div>
     </div>
 
@@ -145,20 +130,16 @@
         lucide.createIcons();
     </script>
 
+    <!-- Sidebar Collapse Script -->
     <script>
-        const sidebarEl = document.getElementById('sidebar');
-        const mainEl = document.getElementById('mainContent');
-        if (sidebarEl && mainEl) {
-            sidebarEl.addEventListener('hidden.bs.collapse', () => {
-                mainEl.classList.remove('col-md-9', 'col-lg-10', 'ms-sm-auto');
-                mainEl.classList.add('col-12');
-            });
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('mainContent');
+        const toggleBtn = document.getElementById('sidebarToggle');
 
-            sidebarEl.addEventListener('shown.bs.collapse', () => {
-                mainEl.classList.add('col-md-9', 'col-lg-10', 'ms-sm-auto');
-                mainEl.classList.remove('col-12');
-            });
-        }
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-collapsed');
+            main.classList.toggle('main-expanded');
+        });
     </script>
 
 </body>
