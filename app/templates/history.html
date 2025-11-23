@@ -24,12 +24,12 @@
                     </h6>
 
                     <div class="list-group">
-                        {% for workout_date in workout_dates %}
-                        <a href="{{ url_for('main.exercises', date=workout_date) }}"
+                        {% for d in dates %}
+                        <a href="{{ url_for('main.history', date=d) }}"
                            class="list-group-item list-group-item-action
-                           {% if selected_workout_date == workout_date %} active {% endif %}">
+                           {% if selected_date == d %} active {% endif %}">
                             <i data-lucide="calendar" class="me-2"></i>
-                            {{ workout_date | format_date }}
+                            {{ d }}
                         </a>
                         {% endfor %}
                     </div>
@@ -40,12 +40,13 @@
 
         <!-- RIGHT: EXERCISE TABLE -->
         <div class="col-md-9">
+
             <div class="card shadow-sm">
                 <div class="card-body">
 
                     <h5 class="fw-semibold mb-3 d-flex align-items-center">
                         <i data-lucide="clipboard-list" class="me-2 text-primary"></i>
-                        {{ selected_workout_date | format_date }} Antrenmanı
+                        {{ selected_date }} Antrenmanı
                     </h5>
 
                     {% if exercises %}
@@ -61,13 +62,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for name, muscle, sets, reps, weight in exercises %}
+                                {% for ex in exercises %}
                                 <tr>
-                                    <td>{{ name }}</td>
-                                    <td>{{ muscle }}</td>
-                                    <td>{{ sets }}</td>
-                                    <td>{{ reps }}</td>
-                                    <td>{{ weight }}</td>
+                                    <td>{{ ex.exercise_name }}</td>
+                                    <td>{{ ex.muscle }}</td>
+                                    <td>{{ ex.sets }}</td>
+                                    <td>{{ ex.reps }}</td>
+                                    <td>{{ ex.weight_kg }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -80,18 +81,18 @@
                 </div>
             </div>
 
-            <!-- MUSCLE SUMMARY -->
-            {% if muscle_summary %}
+            <!-- MUSCLE SUMMARY TABLE -->
+            {% if summary %}
             <div class="card shadow-sm mt-4">
                 <div class="card-body">
 
                     <h5 class="fw-semibold mb-3 d-flex align-items-center">
                         <i data-lucide="activity" class="me-2 text-success"></i>
-                        Kas Grubu Özeti ({{ selected_workout_date | format_date }})
+                        Kas Grubu Özeti ({{ selected_date }})
                     </h5>
 
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table class="table table-sm align-middle">
                             <thead class="table-light">
                                 <tr>
                                     <th>Kas Grubu</th>
@@ -100,11 +101,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for muscle, avg_vol, avg_weight in muscle_summary %}
+                                {% for row in summary %}
                                 <tr>
-                                    <td>{{ muscle }}</td>
-                                    <td>{{ avg_vol | round(2) }}</td>
-                                    <td>{{ avg_weight | round(2) }}</td>
+                                    <td>{{ row.muscle }}</td>
+                                    <td>{{ row.avg_volume | round(2) }}</td>
+                                    <td>{{ row.avg_weight | round(2) }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

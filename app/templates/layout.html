@@ -88,8 +88,8 @@
                     </a>
 
                     <!-- Create New Template -->
-                    <a class="nav-link sidebar-item {% if request.path.startswith('/add-workout') %} active-link {% endif %}"
-                       href="{{ url_for('main.add_workout') }}">
+                    <a class="nav-link sidebar-item {% if request.path.startswith('/add-template') %} active-link {% endif %}"
+                       href="{{ url_for('main.add_template') }}">
                         <i data-lucide="plus-circle" class="sidebar-icon"></i>
                         <span class="link-text">
                             {% if current_language == 'tr' %}Yeni Şablon{% else %}New Template{% endif %}
@@ -106,8 +106,8 @@
                     </a>
 
                     <!-- Workout History -->
-                    <a class="nav-link sidebar-item {% if request.path.startswith('/exercises') %} active-link {% endif %}"
-                       href="{{ url_for('main.exercises') }}">
+                    <a class="nav-link sidebar-item {% if request.path.startswith('/history') %} active-link {% endif %}"
+                       href="{{ url_for('main.history') }}">
                         <i data-lucide="calendar" class="sidebar-icon"></i>
                         <span class="link-text">{{ t.nav_history }}</span>
                     </a>

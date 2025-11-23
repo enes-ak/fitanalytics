@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <h2 class="fw-bold mb-3">Yeni Şablon Oluştur</h2>
+    <p class="text-muted">Hazır hareket kütüphanesinden seçim yaparak kendi workout şablonunu oluştur.</p>
+
+    <form method="POST" id="templateForm">
+
+        <!-- TEMPLATE NAME -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Şablon Adı</label>
+            <input type="text" class="form-control" name="template_name" placeholder="Örn: Push Day" required>
+        </div>
+
+        <!-- WORKOUT TYPE -->
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Antrenman Türü</label>
+            <select class="form-select" name="workout_type" required>
+                <option value="push">Push</option>
+                <option value="pull">Pull</option>
+                <option value="legs">Legs</option>
+                <option value="upper">Upper</option>
+                <option value="lower">Lower</option>
+                <option value="full">Full Body</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <hr class="my-4">
+
+        <h4 class="fw-bold">Hareketler</h4>
+        <p class="text-muted mb-3">Hareket adı yazarak listeden seçebilir veya kas adı yazarak filtreleyebilirsin.</p>
+
+        <div id="exerciseList"></div>
+
+        <button type="button" class="btn btn-outline-primary mt-3" onclick="addExerciseRow()">
+            + Hareket Ekle
+        </button>
+
+        <hr class="my-4">
+
+        <button class="btn btn-primary btn-lg" type="submit">Şablonu Oluştur</button>
+    </form>
+</div>
+
+<script>
+function createExerciseRow() {
+    return `
+    <div class="exercise-row border rounded p-3 mb-3">
+
+        <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <label class="form-label">Hareket</label>
+                <input type="text" class="form-control exercise-input" placeholder="Bench Press, tri..., chest..."
+                       oninput="searchExercises(this)">
+                <div class="autocomplete-box border rounded bg-white mt-1 p-2 d-none"></div>
+                <input type="hidden" name="exercise_lib_id">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Set</label>
+                <input type="number" class="form-control" name="sets">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Tekrar</label>
+                <input type="number" class="form-control" name="reps">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Ağırlık (kg)</label>
+                <input type="number" step="0.5" class="form-control" name="weight">
+            </div>
+
+            <div class="col-md-1 text-end">
+                <button type="button" class="btn btn-danger btn-sm mt-4" onclick="this.closest('.exercise-row').remove()">
+                    Sil
+                </button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function addExerciseRow() {
+    document.getElementById("exerciseList").insertAdjacentHTML("beforeend", createExerciseRow());
+}
+
+async function searchExercises(inputEl) {
+    const query = inputEl.value.trim();
+    const box = inputEl.nextElementSibling;
+
+    if (query.length < 2) {
+        box.classList.add("d-none");
+        box.innerHTML = "";
+        return;
+    }
+
+    const res = await fetch(`/api/search_exercises?q=${query}`);
+    const data = await res.json();
+
+    let html = "";
+    data.forEach(group => {
+        html += `<div class="fw-semibold text-primary mt-2">${group.muscle_name_tr}</div>`;
+        group.exercises.forEach(ex => {
+            html += `
+            <div class="autocomplete-item py-1"
+                 onclick="selectExercise(this)"
+                 data-id="${ex.exercise_lib_id}"
+                 data-name="${ex.name_tr}">
+                ${ex.name_tr}
+            </div>`;
+        });
+    });
+
+    box.innerHTML = html;
+    box.classList.remove("d-none");
+}
+
+function selectExercise(el) {
+    const row = el.closest(".exercise-row");
+
+    const nameInput = row.querySelector(".exercise-input");
+    const hiddenId = row.querySelector("input[name='exercise_lib_id']");
+    const box = row.querySelector(".autocomplete-box");
+
+    nameInput.value = el.dataset.name;
+    hiddenId.value = el.dataset.id;
+
+    box.classList.add("d-none");
+    box.innerHTML = "";
+}
+</script>
+
+{% endblock %}

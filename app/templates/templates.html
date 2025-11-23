@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Benim Şablonlarım</h2>
+            <p class="text-muted">Oluşturduğun tüm antrenman şablonlarını yönet.</p>
+        </div>
+        <i data-lucide="folders" class="text-primary" style="width:40px;height:40px;"></i>
+    </div>
+
+    {% if templates %}
+    <div class="row g-4">
+
+        {% for t in templates %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100 template-card">
+
+                <div class="card-body">
+
+                    <!-- Template Title -->
+                    <h5 class="fw-semibold d-flex align-items-center mb-1">
+                        <i data-lucide="clipboard-list" class="me-2 text-primary"></i>
+                        {{ t.template_name }}
+                    </h5>
+
+                    <!-- Workout Type -->
+                    <p class="text-muted mb-2" style="font-size:14px;">
+                        <i data-lucide="tag" class="me-1" style="width:16px;height:16px;"></i>
+                        Tür: <strong>{{ t.workout_type | capitalize }}</strong>
+                    </p>
+
+                    <!-- Exercise Count -->
+                    <p class="text-muted mb-2" style="font-size:14px;">
+                        <i data-lucide="list" class="me-1" style="width:16px;height:16px;"></i>
+                        Hareket sayısı: <strong>{{ t.count_ex }}</strong>
+                    </p>
+
+                    <!-- Estimated Volume -->
+                    <p class="text-muted mb-3" style="font-size:14px;">
+                        <i data-lucide="bar-chart" class="me-1" style="width:16px;height:16px;"></i>
+                        Tahmini volume: <strong>{{ t.volume | round(2) }} kg</strong>
+                    </p>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex gap-2 mt-3">
+
+                        <a href="{{ url_for('main.template_detail', template_id=t.template_id) }}"
+                        class="btn btn-sm btn-outline-secondary w-100">
+                            <i data-lucide="eye" class="me-1"></i> Gör
+                        </a>
+
+                        <a href="{{ url_for('main.use_template', template_id=t.template_id) }}"
+                        class="btn btn-sm btn-primary w-100 text-white">
+                            <i data-lucide="play" class="me-1"></i> Uygula
+                        </a>
+
+                        <form action="{{ url_for('main.delete_template', template_id=t.template_id) }}"
+                            method="POST"
+                            class="w-100">
+                            <button class="btn btn-sm btn-danger w-100"
+                                    onclick="return confirm('Bu şablonu silmek istediğine emin misin?')">
+                                <i data-lucide="trash-2" class="me-1"></i> Sil
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <i data-lucide="file-x" class="text-muted mb-3" style="width:50px;height:50px;"></i>
+        <h5 class="text-muted">Henüz şablon oluşturmadın.</h5>
+
+        <a href="{{ url_for('main.add_template') }}" class="btn btn-primary mt-3">
+            + Yeni Şablon Oluştur
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
