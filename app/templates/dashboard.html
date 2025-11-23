@@ -48,7 +48,7 @@
                         <h6 class="text-uppercase text-muted mb-1">Son Workout</h6>
                         <h3 class="fw-bold">
                             {% if last_workout_date %}
-                                {{ last_workout_date | datetime_format }}
+                                {{ last_workout_date | format_date }}
                             {% else %}
                                 -
                             {% endif %}
@@ -80,7 +80,7 @@
                     <tbody>
                         {% for row in muscle_stats %}
                         <tr>
-                            <td>{{ row.muscle_name }}</td>
+                            <td>{{ row.muscle }}</td>
                             <td>{{ row.avg_volume | round(2) }}</td>
                             <td>{{ row.avg_weight | round(2) }}</td>
                         </tr>
@@ -110,31 +110,30 @@
     const muscleLabels = {{ muscle_labels | tojson }};
     const muscleVolumes = {{ muscle_volumes | tojson }};
 
-    const labels = stats.map(s => s.muscle_name);
-    const volumeData = stats.map(s => s.avg_volume);
-
-    const ctx = document.getElementById('muscleBarChart').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Ortalama Volume (kg)',
-                data: volumeData,
-                backgroundColor: 'rgba(79,70,229,0.7)',
-                borderColor: 'rgba(79,70,229,1)',
-                borderWidth: 1,
-                borderRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
+    const chartCanvas = document.getElementById('muscleBarChart');
+    if (chartCanvas && muscleLabels.length) {
+        const ctx = chartCanvas.getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: muscleLabels,
+                datasets: [{
+                    label: 'Ortalama Volume (kg)',
+                    data: muscleVolumes,
+                    backgroundColor: 'rgba(79,70,229,0.7)',
+                    borderColor: 'rgba(79,70,229,1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
             }
-        }
-    });
+        });
+    }
 </script>
 
 {% endblock %}

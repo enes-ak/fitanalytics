@@ -29,7 +29,7 @@
                            class="list-group-item list-group-item-action
                            {% if selected_date == d %} active {% endif %}">
                             <i data-lucide="calendar" class="me-2"></i>
-                            {{ d }}
+                            {{ d | format_date }}
                         </a>
                         {% endfor %}
                     </div>
@@ -46,7 +46,7 @@
 
                     <h5 class="fw-semibold mb-3 d-flex align-items-center">
                         <i data-lucide="clipboard-list" class="me-2 text-primary"></i>
-                        {{ selected_date }} Antrenmanı
+                        {{ selected_date | format_date}} Antrenmanı
                     </h5>
 
                     {% if exercises %}
@@ -88,7 +88,7 @@
 
                     <h5 class="fw-semibold mb-3 d-flex align-items-center">
                         <i data-lucide="activity" class="me-2 text-success"></i>
-                        Kas Grubu Özeti ({{ selected_date }})
+                        Kas Grubu Özeti ({{ selected_date | format_date }})
                     </h5>
 
                     <div class="table-responsive">

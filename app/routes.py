@@ -6,7 +6,8 @@ from flask import (
 )
 from werkzeug.security import check_password_hash
 from .database import get_connection
-
+from scripts.utils.datetime import get_today_date
+from scripts.utils.normalization import normalize_text
 
 main = Blueprint("main", __name__)
 
@@ -22,7 +23,8 @@ def api_search_exercises():
     Kullanıcı 'chest' yazdı → muscle_aliases → tüm ilgili hareketleri döner.
     Sonuç: muscle_code altında gruplanmiş exercise listesi (canonical).
     """
-    q = request.args.get("q", "").strip().lower()
+    raw_q = request.args.get("q", "")
+    q = normalize_text(raw_q)
     if len(q) < 2:
         return jsonify([])
 
@@ -507,6 +509,8 @@ def use_template(template_id):
         return redirect(url_for("main.login"))
 
     user_id = session["user_id"]
+    
+    today = get_today_date()
     conn = get_connection()
     cur = conn.cursor()
 
@@ -526,9 +530,9 @@ def use_template(template_id):
     cur.execute(
         """
         INSERT INTO workouts (user_id, workout_date, workout_type, notes)
-        VALUES (?, DATE('now'), ?, ?)
+        VALUES (?, ?, ?, ?)
         """,
-        (user_id, workout_type, f"From template: {tpl_name}"),
+        (user_id, today, workout_type, f"From template: {tpl_name}"),
     )
     workout_id = cur.lastrowid
 
