@@ -28,14 +28,36 @@ def add_exercises_to_template(template_id, exercise_ids, sets, reps, weights):
     cur = conn.cursor()
 
     for i in range(len(exercise_ids)):
+        lib_id = exercise_ids[i]
+
+        # Boş satırı atla
+        if not lib_id or str(lib_id).strip() == "":
+            continue
+
+        cur.execute("""
+            SELECT name_tr AS exercise_name, muscle_id
+            FROM exercise_library
+            WHERE exercise_lib_id = ?
+        """, (lib_id,))
+
+        row = cur.fetchone()
+        if row is None:
+            # Hatalı ID gelmişse de atla
+            continue
+
+        exercise_name = row["exercise_name"]
+        muscle_id = row["muscle_id"]
+
         cur.execute("""
             INSERT INTO template_exercises
-            (template_id, exercise_lib_id, default_sets,
-             default_reps, default_weight)
-            VALUES (?, ?, ?, ?, ?)
+            (template_id, exercise_lib_id, exercise_name, muscle_id,
+             default_sets, default_reps, default_weight)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             template_id,
-            exercise_ids[i],
+            lib_id,
+            exercise_name,
+            muscle_id,
             sets[i] or None,
             reps[i] or None,
             weights[i] or None
@@ -43,6 +65,7 @@ def add_exercises_to_template(template_id, exercise_ids, sets, reps, weights):
 
     conn.commit()
     conn.close()
+
 
 
 # ------------------------------------------------------------
