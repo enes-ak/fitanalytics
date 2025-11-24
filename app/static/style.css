@@ -26,11 +26,6 @@ body {
     padding-top: 12px;
 }
 
-/* Collapsed state */
-#sidebar.sidebar-collapsed {
-    width: 72px !important;
-}
-
 /* Sidebar items */
 .sidebar-item {
     display: flex;
@@ -66,17 +61,6 @@ body {
 }
 
 /* Collapsed → hide text */
-#sidebar.sidebar-collapsed .sidebar-item span {
-    opacity: 0;
-    transform: translateX(-15px);
-    pointer-events: none;
-}
-
-/* Collapsed → center items */
-#sidebar.sidebar-collapsed .sidebar-item {
-    justify-content: center;
-}
-
 /* Active link — taşma yapmayacak şekilde düzeltildi */
 .active-link {
     background: #e4ebff !important;
@@ -86,19 +70,20 @@ body {
     padding-left: 15px;               /* border compensation */
 }
 
-#sidebar.sidebar-collapsed .active-link {
-    padding-left: 0 !important;
-    border-left: none !important;
-}
-
-/* MAIN CONTENT genişlemesi */
 #mainContent {
     transition: margin-left 0.25s ease;
     margin-left: 240px;
 }
 
-#mainContent.main-expanded {
-    margin-left: 72px !important;
+body.sidebar-hidden #sidebar {
+    display: none;
+}
+
+body.sidebar-hidden #mainContent {
+    margin-left: 0 !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
 }
 
 /* ============ DASHBOARD CARDS ============ */

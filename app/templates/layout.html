@@ -132,13 +132,9 @@
 
     <!-- Sidebar Collapse Script -->
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const main = document.getElementById('mainContent');
         const toggleBtn = document.getElementById('sidebarToggle');
-
         toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar-collapsed');
-            main.classList.toggle('main-expanded');
+            document.body.classList.toggle('sidebar-hidden');
         });
     </script>
 
