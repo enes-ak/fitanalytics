@@ -1,7 +1,19 @@
-from flask import render_template, request, redirect, url_for, session, current_app
+# app/blueprints/auth.py
+
+from flask import (
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    current_app
+)
 from werkzeug.security import check_password_hash
+
 from . import main
-from app.database import get_connection
+
+# Service katmanı
+from app.services.user_services import get_user_by_email
 
 
 @main.route("/login", methods=["GET", "POST"])
@@ -15,13 +27,10 @@ def login():
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
 
-        conn = get_connection()
-        cur = conn.cursor()
+        # Service kullanımı
+        user = get_user_by_email(email)
 
-        cur.execute("SELECT user_id, name, password_hash FROM users WHERE email = ?", (email,))
-        user = cur.fetchone()
-        conn.close()
-
+        # Kullanıcı bulundu + şifre doğru mu?
         if user and check_password_hash(user["password_hash"], password):
             session.clear()
             session["user_id"] = user["user_id"]
