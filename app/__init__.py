@@ -1,6 +1,6 @@
 from flask import Flask, session
-from datetime import datetime, date
-from .routes import main
+from datetime import datetime
+from app.blueprints import main as main_blueprint
 
 
 def create_app():
@@ -8,7 +8,7 @@ def create_app():
     app.secret_key = "fitanalytics_secret_key"
 
     # ============================================================
-    # INTERNATIONALIZATION LAYER
+    # LANGUAGES (TR / EN)
     # ============================================================
     app.config["LANGUAGES"] = {
         "tr": {
@@ -35,13 +35,12 @@ def create_app():
     }
 
     # ============================================================
-    # GLOBAL TEMPLATE CONTEXT
+    # JINJA GLOBAL CONTEXT
     # ============================================================
     @app.context_processor
     def inject_globals():
         lang = session.get("language", "tr")
         translations = app.config["LANGUAGES"].get(lang, app.config["LANGUAGES"]["tr"])
-
         return {
             "current_language": lang,
             "t": translations,
@@ -49,55 +48,32 @@ def create_app():
         }
 
     # ============================================================
-    # UNIFIED DATE FILTERS
+    # JINJA FILTERS
     # ============================================================
-    def _parse_date_value(value):
-        """Coerce different incoming date representations into a datetime."""
-        if not value:
-            return None
-
-        if isinstance(value, datetime):
-            return value
-
-        if isinstance(value, date):
-            return datetime(value.year, value.month, value.day)
-
-        if isinstance(value, str):
-            for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y"):
-                try:
-                    return datetime.strptime(value, fmt)
-                except ValueError:
-                    continue
-
-        return None
-
     @app.template_filter("format_date")
     def format_date(value):
-        """Render any stored date as Gün-Ay-Yıl (DD.MM.YYYY)."""
-        dt = _parse_date_value(value)
-        if not dt:
-            return value if value else "-"
-        return dt.strftime("%d.%m.%Y")
+        if not value:
+            return "-"
+        try:
+            dt = datetime.strptime(value, "%Y-%m-%d")
+            return dt.strftime("%d/%m/%Y")
+        except Exception:
+            return value
 
     @app.template_filter("datetime_format")
     def datetime_format(value):
-        """Human readable Gün Ay Yıl format (e.g. 24 Mart 2025)."""
-        dt = _parse_date_value(value)
-        if not dt:
-            return value if value else "-"
-
-        # İngilizce ay isimleri gelmesin diye locale bağımlılığını çözüyoruz
-        months_tr = {
-            1: "Ocak", 2: "Şubat", 3: "Mart", 4: "Nisan", 5: "Mayıs", 6: "Haziran",
-            7: "Temmuz", 8: "Ağustos", 9: "Eylül", 10: "Ekim", 11: "Kasım", 12: "Aralık"
-        }
-
-        month_name = months_tr.get(dt.month, str(dt.month))
-        return f"{dt.day} {month_name} {dt.year}"
+        if not value:
+            return "-"
+        try:
+            dt = datetime.strptime(value, "%Y-%m-%d")
+            return dt.strftime("%d/%m/%Y")
+        except Exception:
+            return value
 
     # ============================================================
-    # BLUEPRINT REGISTRATION
+    # REGISTER BLUEPRINTS
     # ============================================================
-    app.register_blueprint(main)
+    # Artık routes.py yok; tüm route’lar blueprints içinde
+    app.register_blueprint(main_blueprint)
 
     return app
