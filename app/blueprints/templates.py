@@ -4,6 +4,7 @@ from flask import render_template, request, redirect, url_for, session
 from . import main
 from app.database import get_connection
 from app.utils.datetime import today_db
+from app.data.popular_templates import POPULAR_TEMPLATES
 
 # Service katmanı
 from app.services.workout_services import create_workout_from_template
@@ -101,7 +102,41 @@ def add_template():
 
         return redirect(url_for("main.my_templates"))
 
-    return render_template("add_template.html")
+    return render_template("add_template.html", popular_templates=POPULAR_TEMPLATES)
+
+
+# -------------------------------------------------------------
+# ADD TEMPLATE FROM PRESET
+# -------------------------------------------------------------
+@main.route("/add-template/preset", methods=["POST"])
+def add_template_from_preset():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    slug = request.form.get("preset_slug")
+    preset = next((tpl for tpl in POPULAR_TEMPLATES if tpl["slug"] == slug), None)
+    if not preset:
+        return redirect(url_for("main.add_template"))
+
+    user_id = session["user_id"]
+    custom_name = request.form.get("custom_name") or preset["name"]
+
+    template_id = create_workout_template(user_id, custom_name, preset["workout_type"])
+
+    exercise_ids = [str(ex["exercise_lib_id"]) for ex in preset["exercises"]]
+    sets = [str(ex.get("sets") or "") for ex in preset["exercises"]]
+    reps = [str(ex.get("reps") or "") for ex in preset["exercises"]]
+    weights = [str(ex.get("weight") or "") for ex in preset["exercises"]]
+
+    add_exercises_to_template(
+        template_id,
+        exercise_ids=exercise_ids,
+        sets=sets,
+        reps=reps,
+        weights=weights,
+    )
+
+    return redirect(url_for("main.template_detail", template_id=template_id))
 
 
 # -------------------------------------------------------------
