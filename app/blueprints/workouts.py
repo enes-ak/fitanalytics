@@ -190,7 +190,7 @@ def edit_exercise(exercise_id):
 
     sets = request.form.get("sets")
     reps = request.form.get("reps")
-    weight = request.form.get("weight")
+    weight = request.form.get("weight_kg")
 
     conn = get_connection()
     cur = conn.cursor()
