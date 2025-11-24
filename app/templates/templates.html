@@ -87,7 +87,7 @@
     <div class="card shadow-sm border-0 mb-5">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-semibold mb-0">Haftalık Plan Kas İstatistikleri</h5>
+                <h5 class="fw-semibold mb-0">Aktif Plana Göre Haftalık İstatistikler</h5>
                 <i data-lucide="bar-chart-3" class="text-success" style="width:26px;height:26px;"></i>
             </div>
 
@@ -97,7 +97,8 @@
                     <thead class="table-light">
                         <tr>
                             <th>Kas Grubu</th>
-                            <th>Tahmini Volume (kg)</th>
+                            <th>Tahmini Volume (kg x set x rep)</th>
+                            <th>Ortalama Ağırlık (kg)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +106,7 @@
                         <tr>
                             <td>{{ row.muscle }}</td>
                             <td>{{ row.total_volume | round(2) }}</td>
+                            <td>{{ row.avg_weight | round(2) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -14,29 +14,36 @@ body {
     letter-spacing: -0.5px;
 }
 
+/* ============ LAYOUT ============ */
+.app-shell {
+    min-height: calc(100vh - 56px);
+    display: flex;
+}
+
 /* ============ MODERN SIDEBAR ============ */
 
 #sidebar {
-    width: 240px;
+    width: 180px;
+    flex: 0 0 180px;
     min-height: calc(100vh - 56px);
     background: #ffffff;
     border-right: 1px solid #e5e7eb;
     transition: width 0.25s ease;
     overflow: hidden;
-    padding-top: 12px;
+    padding-top: 10px;
 }
 
 /* Sidebar items */
 .sidebar-item {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 18px;
+    align-items: left;
+    gap: 10px;
+    padding: 10px 18px;
     font-size: 15px;
     font-weight: 500;
     color: #374151 !important;
     border-radius: 8px;
-    margin: 6px 10px;
+    margin: 6px 1px;
     white-space: nowrap;
     transition: background 0.2s, transform 0.2s, color 0.2s;
 }
@@ -71,8 +78,7 @@ body {
 }
 
 #mainContent {
-    transition: margin-left 0.25s ease;
-    margin-left: 240px;
+    flex: 1;
 }
 
 body.sidebar-hidden #sidebar {

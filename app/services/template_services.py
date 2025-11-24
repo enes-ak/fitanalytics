@@ -179,7 +179,10 @@ def get_plan_muscle_stats(user_id: int):
                    COALESCE(te.default_sets, 0) *
                    COALESCE(te.default_reps, 0) *
                    COALESCE(te.default_weight, 0)
-               ) AS total_volume
+               ) AS total_volume,
+                AVG(
+                     COALESCE(te.default_weight, 0)
+                )  AS avg_weight
         FROM active_weekly_plan awp
         JOIN template_exercises te ON te.template_id = awp.template_id
         JOIN muscles m ON m.muscle_id = te.muscle_id
@@ -192,6 +195,7 @@ def get_plan_muscle_stats(user_id: int):
         {
             "muscle": row["muscle_name"],
             "total_volume": float(row["total_volume"] or 0),
+            "avg_weight": float(row["avg_weight"] or 0)
         }
         for row in cur.fetchall()
     ]

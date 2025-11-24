@@ -72,11 +72,11 @@
     </nav>
 
     <!-- APP LAYOUT -->
-    <div class="container-fluid">
-        <div class="row app-layout">
+    <div class="container-fluid px-0">
+        <div class="app-shell d-flex">
 
             <!-- SIDEBAR -->
-            <nav id="sidebar" class="sidebar-modern col-md-3 col-lg-2 bg-white border-end shadow-sm">
+            <nav id="sidebar" class="sidebar-modern bg-white border-end shadow-sm">
 
                 <div class="d-flex flex-column pt-3">
 
@@ -116,7 +116,7 @@
             </nav>
 
             <!-- MAIN CONTENT -->
-            <main id="mainContent" class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <main id="mainContent" class="flex-grow-1 px-4 py-4">
                 {% block content %}{% endblock %}
             </main>
         </div>
