@@ -12,6 +12,110 @@
         <i data-lucide="folders" class="text-primary" style="width:40px;height:40px;"></i>
     </div>
 
+    <!-- ACTIVE WEEKLY PLAN SECTION -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h4 class="fw-semibold mb-1">Aktif Haftalık Planım</h4>
+                    <p class="text-muted mb-0">Haftanın hangi gününde hangi programı uygulayacağını seç.</p>
+                </div>
+                <i data-lucide="calendar-range" class="text-primary" style="width:32px;height:32px;"></i>
+            </div>
+
+            {% if active_plan %}
+            <div class="row g-3 mb-4">
+                {% for day in active_plan %}
+                <div class="col-md-4">
+                    <div class="border rounded-4 p-3 h-100 bg-light-subtle">
+                        <span class="badge bg-primary-subtle text-primary mb-2">Gün {{ loop.index }}</span>
+                        <h5 class="fw-semibold mb-1">{{ day.template_name }}</h5>
+                        <p class="text-muted mb-0 text-capitalize">{{ day.workout_type }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">Aktif planın boş. Aşağıdaki formdan günleri ekleyebilirsin.</p>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('main.update_active_plan') }}" id="activePlanForm">
+                <div id="planRows" class="d-flex flex-column gap-2">
+                    {% set plan_rows = active_plan if active_plan else [None] %}
+                    {% for day in plan_rows %}
+                    <div class="plan-row d-flex gap-2 align-items-center">
+                        <span class="badge bg-light text-dark day-label">Gün {{ loop.index }}</span>
+                        <select class="form-select" name="plan_template_id[]">
+                            <option value="">Şablon seç...</option>
+                            {% for tpl in templates %}
+                            <option value="{{ tpl.template_id }}"
+                                {% if day and day.template_id == tpl.template_id %}selected{% endif %}>
+                                {{ tpl.template_name }} ({{ tpl.workout_type | capitalize }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if day %}
+                        <a href="{{ url_for('main.use_template', template_id=day.template_id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            Uygula
+                        </a>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="applySelectedTemplate(this)">
+                            Uygula
+                        </button>
+                        {% endif %}
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                onclick="removePlanRow(this)">
+                            Sil
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" class="btn btn-outline-secondary" onclick="addPlanRow()">
+                        + Gün Ekle
+                    </button>
+                    <button class="btn btn-primary">Planı Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WEEKLY PLAN STATS -->
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-semibold mb-0">Haftalık Plan Kas İstatistikleri</h5>
+                <i data-lucide="bar-chart-3" class="text-success" style="width:26px;height:26px;"></i>
+            </div>
+
+            {% if plan_stats %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Kas Grubu</th>
+                            <th>Tahmini Volume (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in plan_stats %}
+                        <tr>
+                            <td>{{ row.muscle }}</td>
+                            <td>{{ row.total_volume | round(2) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">Plan seçildiğinde kas başına tahmini volume burada görüntülenecek.</p>
+            {% endif %}
+        </div>
+    </div>
+
     {% if templates %}
     <div class="row g-4">
 
@@ -89,5 +193,66 @@
     {% endif %}
 
 </div>
+
+<template id="planRowTemplate">
+    <div class="plan-row d-flex gap-2 align-items-center">
+        <span class="badge bg-light text-dark day-label">Gün</span>
+        <select class="form-select" name="plan_template_id[]">
+            <option value="">Şablon seç...</option>
+            {% for tpl in templates %}
+            <option value="{{ tpl.template_id }}">{{ tpl.template_name }} ({{ tpl.workout_type | capitalize }})</option>
+            {% endfor %}
+        </select>
+        <button type="button" class="btn btn-outline-primary btn-sm" onclick="applySelectedTemplate(this)">Uygula</button>
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePlanRow(this)">Sil</button>
+    </div>
+</template>
+
+<script>
+    const planRowsContainer = document.getElementById('planRows');
+    const planRowTemplate = document.getElementById('planRowTemplate');
+
+    function updateDayLabels() {
+        if (!planRowsContainer) return;
+        const labels = planRowsContainer.querySelectorAll('.day-label');
+        labels.forEach((badge, idx) => {
+            badge.textContent = `Gün ${idx + 1}`;
+        });
+    }
+
+    function addPlanRow() {
+        if (!planRowsContainer || !planRowTemplate) return;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = planRowTemplate.innerHTML.trim();
+        const row = wrapper.firstElementChild;
+        planRowsContainer.appendChild(row);
+        updateDayLabels();
+    }
+
+    function removePlanRow(button) {
+        if (!planRowsContainer) return;
+        const rows = planRowsContainer.querySelectorAll('.plan-row');
+        if (rows.length === 1) {
+            rows[0].querySelector('select').value = '';
+            return;
+        }
+        button.closest('.plan-row').remove();
+        updateDayLabels();
+    }
+
+    function applySelectedTemplate(button) {
+        const row = button.closest('.plan-row');
+        if (!row) return;
+        const select = row.querySelector('select');
+        const value = select.value;
+        if (!value) {
+            alert('Lütfen önce bir şablon seçin.');
+            return;
+        }
+        window.location.href = `/use-template/${value}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', updateDayLabels);
+</script>
 
 {% endblock %}

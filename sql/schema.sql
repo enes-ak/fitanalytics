@@ -69,6 +69,19 @@ CREATE TABLE IF NOT EXISTS template_exercises (
     FOREIGN KEY (exercise_lib_id) REFERENCES exercise_library(exercise_lib_id),
     FOREIGN KEY (muscle_id) REFERENCES muscles(muscle_id)
 );
+
+---------------------------------------------------------------
+-- ACTIVE WEEKLY PLAN (user selects templates per week day)
+---------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS active_weekly_plan (
+    plan_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    plan_slot   INTEGER NOT NULL,
+    template_id INTEGER NOT NULL,
+    UNIQUE(user_id, plan_slot),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (template_id) REFERENCES workout_templates(template_id)
+);
 ---------------------------------------------------------------
 -- CANONICAL MUSCLES
 ---------------------------------------------------------------

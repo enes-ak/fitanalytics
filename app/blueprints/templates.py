@@ -13,7 +13,10 @@ from app.services.template_services import (
     get_template_header,
     get_template_exercises,
     add_exercises_to_template,
-    delete_template_by_id
+    delete_template_by_id,
+    get_active_plan,
+    save_active_plan,
+    get_plan_muscle_stats,
 )
 
 # -------------------------------------------------------------
@@ -40,10 +43,19 @@ def my_templates():
         ORDER BY wt.template_name ASC
     """, (user_id,))
 
-    templates = cur.fetchall()
+    template_rows = cur.fetchall()
     conn.close()
 
-    return render_template("templates.html", templates=templates)
+    templates = [dict(row) for row in template_rows]
+    active_plan = [dict(row) for row in get_active_plan(user_id)]
+    plan_stats = get_plan_muscle_stats(user_id)
+
+    return render_template(
+        "templates.html",
+        templates=templates,
+        active_plan=active_plan,
+        plan_stats=plan_stats,
+    )
 
 
 # -------------------------------------------------------------
@@ -137,6 +149,25 @@ def add_template_from_preset():
     )
 
     return redirect(url_for("main.template_detail", template_id=template_id))
+
+
+# -------------------------------------------------------------
+# UPDATE ACTIVE WEEKLY PLAN
+# -------------------------------------------------------------
+@main.route("/my-templates/active-plan", methods=["POST"])
+def update_active_plan():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+    template_ids = []
+    for raw in request.form.getlist("plan_template_id[]"):
+        raw = (raw or "").strip()
+        if raw.isdigit():
+            template_ids.append(int(raw))
+
+    save_active_plan(user_id, template_ids)
+    return redirect(url_for("main.my_templates"))
 
 
 # -------------------------------------------------------------

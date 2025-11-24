@@ -50,6 +50,12 @@
                                        placeholder="İsteğe göre ad değiştir">
                                 <button class="btn btn-sm btn-primary w-100">Şablonu Kütüphaneme Ekle</button>
                             </form>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary w-100 mt-2"
+                                    onclick="loadPreset('{{ preset.slug }}')">
+                                Düzenleyerek Kullan
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -99,32 +105,41 @@
 </div>
 
 <script>
-function createExerciseRow() {
+const popularPresets = {{ popular_templates | tojson }};
+
+function createExerciseRow(populated = null, showLabels = false) {
+    const nameValue = populated ? populated.name : "";
+    const setsValue = populated && populated.sets ? populated.sets : "";
+    const repsValue = populated && populated.reps ? populated.reps : "";
+    const weightValue = populated && populated.weight ? populated.weight : "";
+    const libId = populated ? populated.exercise_lib_id : "";
+
     return `
     <div class="exercise-row border rounded p-3 mb-3">
 
         <div class="row g-2 align-items-center">
             <div class="col-md-5">
-                <label class="form-label">Hareket</label>
+                <label class="form-label ${showLabels ? '' : 'visually-hidden'}">Hareket</label>
                 <input type="text" class="form-control exercise-input" placeholder="Bench Press, tri..., chest..."
+                       value="${nameValue}"
                        oninput="searchExercises(this)">
                 <div class="autocomplete-box border rounded bg-white mt-1 p-2 d-none"></div>
-                <input type="hidden" name="exercise_lib_id">
+                <input type="hidden" name="exercise_lib_id" value="${libId}">
             </div>
 
             <div class="col-md-2">
-                <label class="form-label">Set</label>
-                <input type="number" class="form-control" name="sets">
+                <label class="form-label ${showLabels ? '' : 'visually-hidden'}">Set</label>
+                <input type="number" class="form-control" name="sets" value="${setsValue}">
             </div>
 
             <div class="col-md-2">
-                <label class="form-label">Tekrar</label>
-                <input type="number" class="form-control" name="reps">
+                <label class="form-label ${showLabels ? '' : 'visually-hidden'}">Tekrar</label>
+                <input type="number" class="form-control" name="reps" value="${repsValue}">
             </div>
 
             <div class="col-md-2">
-                <label class="form-label">Ağırlık (kg)</label>
-                <input type="number" step="0.5" class="form-control" name="weight">
+                <label class="form-label ${showLabels ? '' : 'visually-hidden'}">Ağırlık (kg)</label>
+                <input type="number" step="0.5" class="form-control" name="weight" value="${weightValue}">
             </div>
 
             <div class="col-md-1 text-end">
@@ -136,8 +151,10 @@ function createExerciseRow() {
     </div>`;
 }
 
-function addExerciseRow() {
-    document.getElementById("exerciseList").insertAdjacentHTML("beforeend", createExerciseRow());
+function addExerciseRow(prefill = null) {
+    const container = document.getElementById("exerciseList");
+    const showLabels = container.children.length === 0;
+    container.insertAdjacentHTML("beforeend", createExerciseRow(prefill, showLabels));
 }
 
 async function searchExercises(inputEl) {
@@ -183,6 +200,23 @@ function selectExercise(el) {
 
     box.classList.add("d-none");
     box.innerHTML = "";
+}
+
+function loadPreset(slug) {
+    const preset = popularPresets.find((p) => p.slug === slug);
+    if (!preset) {
+        return;
+    }
+
+    document.querySelector("input[name='template_name']").value = preset.name;
+    const typeSelect = document.querySelector("select[name='workout_type']");
+    typeSelect.value = preset.workout_type;
+
+    const list = document.getElementById("exerciseList");
+    list.innerHTML = "";
+    preset.exercises.forEach((exercise) => addExerciseRow(exercise));
+
+    document.getElementById("templateForm").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 </script>
 

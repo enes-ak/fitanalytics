@@ -49,16 +49,17 @@ def dashboard():
     muscle_labels = [r["muscle_name"] for r in rows]
     muscle_volumes = [float(r["avg_volume"] or 0) for r in rows]
 
-    # Son workout tarihi
     cur.execute("""
-        SELECT workout_date
+        SELECT 
+            MIN(workout_date) AS first_date,
+            MAX(workout_date) AS last_date
         FROM workouts
         WHERE user_id = ?
-        ORDER BY workout_date DESC
-        LIMIT 1
     """, (user_id,))
-    last_row = cur.fetchone()
-    last_date = last_row["workout_date"] if last_row else None
+    row = cur.fetchone()
+
+    first_date = row["first_date"] if row["first_date"] else None
+    last_date  = row["last_date"]  if row["last_date"] else None
 
     conn.close()
 
@@ -69,7 +70,8 @@ def dashboard():
         muscle_stats=muscle_stats,
         muscle_labels=muscle_labels,
         muscle_volumes=muscle_volumes,
-        last_workout_date=last_date
+        last_workout_date=last_date,
+        first_workout_date=first_date
     )
 
 

@@ -74,7 +74,7 @@
                     {% for ex in exercises %}
                     <tr>
                         <td>{{ ex.exercise_name }}</td>
-                        <td>{{ ex.target_muscle }}</td>
+                        <td>{{ ex.muscle_name or '-' }}</td>
                         <td>{{ ex.default_sets }}</td>
                         <td>{{ ex.default_reps }}</td>
                         <td>{{ ex.default_weight }}</td>

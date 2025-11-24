@@ -6,8 +6,8 @@
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Dashboard</h2>
-            <p class="text-muted mb-0">Genel antrenman özetin</p>
+            <h2 class="fw-bold mb-1">Ana Sayfa</h2>
+            <p class="text-muted mb-0">Genel Antrenman Özetin</p>
         </div>
     </div>
 
@@ -15,12 +15,12 @@
     <div class="row g-3">
 
         <!-- Total Workouts -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm dashboard-card">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase text-muted mb-1">Toplam Workout</h6>
-                        <h3 class="fw-bold">{{ total_workouts }}</h3>
+                        <h3 class="fw-bold">{{ total_workouts }} Aktif Gün</h3>
                     </div>
                     <i data-lucide="dumbbell" class="text-primary" style="width:38px;height:38px;"></i>
                 </div>
@@ -28,7 +28,7 @@
         </div>
 
         <!-- Total Volume -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm dashboard-card">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
@@ -41,11 +41,11 @@
         </div>
 
         <!-- Last Workout -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm dashboard-card">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-uppercase text-muted mb-1">Son Workout</h6>
+                        <h6 class="text-uppercase text-muted mb-1">Son Antrenman Tarihi</h6>
                         <h3 class="fw-bold">
                             {% if last_workout_date %}
                                 {{ last_workout_date | format_date }}
@@ -58,7 +58,25 @@
                 </div>
             </div>
         </div>
-
+        
+         <!-- First Workout -->
+        <div class="col-md-3">
+            <div class="card shadow-sm dashboard-card">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase text-muted mb-1">İlk Antrenman Tarihi</h6>
+                        <h3 class="fw-bold">
+                            {% if first_workout_date %}
+                                {{ first_workout_date | format_date }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <i data-lucide="calendar" class="text-info" style="width:38px;height:38px;"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- MUSCLE TABLE -->
